@@ -324,7 +324,8 @@ public class User extends WeiboResponse implements java.io.Serializable {
       for (int i = 0; i < size; i++) {
         users.add(new User(user.getJSONObject(i)));
       }
-      long previousCursor = jsonUsers.getLong("previous_curosr");
+      // fix bug #4, see https://github.com/wenx999/weibo4j_fixbug/issues/4
+      long previousCursor = jsonUsers.getLong("previous_cursor");
       long nextCursor = jsonUsers.getLong("next_cursor");
       long totalNumber = jsonUsers.getLong("total_number");
       String hasvisible = jsonUsers.getString("hasvisible");

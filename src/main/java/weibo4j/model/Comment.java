@@ -79,7 +79,8 @@ public class Comment extends WeiboResponse implements java.io.Serializable {
       for (int i = 0; i < size; i++) {
         comment.add(new Comment(comments.getJSONObject(i)));
       }
-      long previousCursor = json.getLong("previous_curosr");
+      // fix bug #4, see https://github.com/wenx999/weibo4j_fixbug/issues/4
+      long previousCursor = json.getLong("previous_cursor");
       long nextCursor = json.getLong("next_cursor");
       long totalNumber = json.getLong("total_number");
       String hasvisible = json.getString("hasvisible");
