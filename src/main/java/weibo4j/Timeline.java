@@ -118,7 +118,7 @@ public class Timeline extends Weibo {
    *      statuses/friends_timeline </a>
    * @since JDK 1.5
    */
-  public StatusWapper(String GID, Integer baseAPP, Integer feature, Paging paging)
+  public StatusWapper getGroupTimeline(String GID, Integer baseAPP, Integer feature, Paging paging)
       throws WeiboException {
     return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")
         + "friendships/groups/timeline.json", new PostParameter[] {
