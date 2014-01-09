@@ -363,7 +363,6 @@ public class Timeline extends Weibo {
         new PostParameter[] {new PostParameter("id", id)}, page).asJSONObject();
   }
 
-
   /**
    * 获取当前用户最新转发的微博列表
    * 
@@ -824,6 +823,27 @@ public class Timeline extends Weibo {
         new PostParameter[] {new PostParameter("status", status),
             new PostParameter("lat", lat.toString()), new PostParameter("long", longs.toString())},
         item));
+  }
+
+  /**
+   * 上传图片并发布一条新微博
+   * 
+   * @param status
+   *            要发布的微博文本内容，必须做URLencode，内容不超过140个汉字
+   * @param imgUrl
+   *            图片路径
+   * @return Status
+   * @throws WeiboException
+   *             when Weibo service or network is unavailable
+   * @version weibo4j-V2 1.0.0
+   * @see <a
+   *      href="http://open.weibo.com/wiki/2/statuses/upload">statuses/upload</a>
+   * @since JDK 1.5
+   */
+  public Status UploadStatusUrl(String status, String imgUrl) throws WeiboException {
+    return new Status(client.post(
+        WeiboConfig.getValue("baseURL") + "statuses/upload_url_text.json", new PostParameter[] {
+            new PostParameter("status", status), new PostParameter("url", imgUrl)}));
   }
 
   /**
