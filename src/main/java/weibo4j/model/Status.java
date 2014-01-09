@@ -34,6 +34,7 @@ public class Status extends WeiboResponse implements java.io.Serializable {
   private double longitude = -1; //经度
   private int repostsCount; //转发数
   private int commentsCount; //评论数
+  private int attitudesCount; //赞数
   private String annotations; //元数据，没有时不返回此字段
   private int mlevel;
   private Visible visible;
@@ -69,6 +70,8 @@ public class Status extends WeiboResponse implements java.io.Serializable {
       originalPic = json.getString("original_pic");
       repostsCount = json.getInt("reposts_count");
       commentsCount = json.getInt("comments_count");
+      // fix bug #3，see https://github.com/wenx999/weibo4j_fixbug/issues/3
+      attitudesCount = json.getInt("attitudes_count");
       annotations = json.getString("annotations");
       if (!json.isNull("user")) user = new User(json.getJSONObject("user"));
       if (!json.isNull("retweeted_status")) {
@@ -268,6 +271,14 @@ public class Status extends WeiboResponse implements java.io.Serializable {
     this.commentsCount = commentsCount;
   }
 
+  public int getAttitudesCount() {
+    return attitudesCount;
+  }
+
+  public void setAttitudesCount(int attitudesCount) {
+    this.attitudesCount = attitudesCount;
+  }
+
   public String getMid() {
     return mid;
   }
@@ -362,8 +373,8 @@ public class Status extends WeiboResponse implements java.io.Serializable {
         + thumbnailPic + ", bmiddlePic=" + bmiddlePic + ", originalPic=" + originalPic
         + ", retweetedStatus=" + retweetedStatus + ", geo=" + geo + ", latitude=" + latitude
         + ", longitude=" + longitude + ", repostsCount=" + repostsCount + ", commentsCount="
-        + commentsCount + ", mid=" + mid + ", annotations=" + annotations + ", mlevel=" + mlevel
-        + ", visible=" + visible + "]";
+        + commentsCount + ", attitudesCount=" + attitudesCount + ", mid=" + mid + ", annotations="
+        + annotations + ", mlevel=" + mlevel + ", visible=" + visible + "]";
   }
 
 }
