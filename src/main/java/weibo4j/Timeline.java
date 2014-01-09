@@ -118,7 +118,7 @@ public class Timeline extends Weibo {
    *      statuses/friends_timeline </a>
    * @since JDK 1.5
    */
-  public StatusWapper getGroupTimeline(String GID, Integer baseAPP, Integer feature, Paging paging)
+  public StatusWapper(String GID, Integer baseAPP, Integer feature, Paging paging)
       throws WeiboException {
     return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")
         + "friendships/groups/timeline.json", new PostParameter[] {
@@ -343,6 +343,26 @@ public class Timeline extends Weibo {
     return client.get(WeiboConfig.getValue("baseURL") + "statuses/repost_timeline/ids.json",
         new PostParameter[] {new PostParameter("id", id)}).asJSONObject();
   }
+
+  /**
+   * 获取指定微博的转发微博列表
+   * 
+   * @param id
+   *            需要查询的微博ID
+   * @param page
+   * @return ids
+   * @throws WeiboException
+   *             when Weibo service or network is unavailable
+   * @version weibo4j-V2 1.0.0
+   * @see <a
+   *      href="http://open.weibo.com/wiki/2/statuses/repost_timeline/ids">statuses/repost_timeline/ids</a>
+   * @since JDK 1.5
+   */
+  public JSONObject getRepostTimelineIds(String id, Paging page) throws WeiboException {
+    return client.get(WeiboConfig.getValue("baseURL") + "statuses/repost_timeline/ids.json",
+        new PostParameter[] {new PostParameter("id", id)}, page).asJSONObject();
+  }
+
 
   /**
    * 获取当前用户最新转发的微博列表
