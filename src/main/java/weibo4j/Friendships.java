@@ -26,6 +26,13 @@ public class Friendships extends Weibo {
    *      href="http://open.weibo.com/wiki/2/friendships/friends">friendships/friends</a>
    * @since JDK 1.5
    */
+
+  public UserWapper getFriendsByID(String uid, Integer sort, Paging page) throws WeiboException {
+    return User.constructWapperUsers(client.get(WeiboConfig.getValue("baseURL")
+        + "friendships/friends.json", new PostParameter[] {new PostParameter("uid", uid),
+        new PostParameter("sort", sort.toString())}, page));
+  }
+
   public UserWapper getFriendsByID(String id) throws WeiboException {
     return User.constructWapperUsers(client.get(WeiboConfig.getValue("baseURL")
         + "friendships/friends.json", new PostParameter[] {new PostParameter("uid", id)}));
