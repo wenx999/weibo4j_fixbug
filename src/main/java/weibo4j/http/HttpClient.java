@@ -1,7 +1,10 @@
 package weibo4j.http;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.URLEncoder;
@@ -379,7 +382,20 @@ public class HttpClient implements java.io.Serializable {
         log(header.getName() + ":" + header.getValue());
       }
       Response response = new Response();
-      response.setResponseAsString(method.getResponseBodyAsString());
+
+      // fix bug #5, see https://github.com/wenx999/weibo4j_fixbug/issues/5
+      //replace this part to getResponseBodyAsStream() to avoid warning
+      //response.setResponseAsString(method.getResponseBodyAsString());
+      InputStream inputStream = method.getResponseBodyAsStream();
+      BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+      StringBuffer stringBuffer = new StringBuffer();
+      String str = "";
+      while ((str = br.readLine()) != null) {
+        stringBuffer.append(str);
+      }
+      response.setResponseAsString(stringBuffer.toString());
+
+
       log(response.toString() + "\n");
 
       if (responseCode != OK)
