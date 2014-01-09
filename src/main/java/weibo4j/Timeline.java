@@ -104,6 +104,29 @@ public class Timeline extends Weibo {
   }
 
   /**
+   * 获取某一好友分组的微博列表
+   * 
+   * @param GID
+   * @param paging
+   *            相关分页参数
+   * @param 过滤类型ID，0：全部、1：原创、2：图片、3：视频、4：音乐，默认为0。
+   * @return list of the Friends Timeline
+   * @throws WeiboException
+   *             when Weibo service or network is unavailable
+   * @version weibo4j-V2 1.0.1
+   * @see <a href="http://open.weibo.com/wiki/2/friendships/groups/timeline">
+   *      statuses/friends_timeline </a>
+   * @since JDK 1.5
+   */
+  public StatusWapper getGroupTimeline(String GID, Integer baseAPP, Integer feature, Paging paging)
+      throws WeiboException {
+    return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")
+        + "friendships/groups/timeline.json", new PostParameter[] {
+        new PostParameter("list_id", GID), new PostParameter("base_app", baseAPP.toString()),
+        new PostParameter("feature", feature.toString())}, paging));
+  }
+
+  /**
    * 获取当前登录用户及其所关注用户的最新20条微博消息。
    * 和用户登录 http://weibo.com 后在“我的首页”中看到的内容相同。
    * This method calls
