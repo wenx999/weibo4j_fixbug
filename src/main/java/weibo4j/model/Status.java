@@ -60,7 +60,8 @@ public class Status extends WeiboResponse implements java.io.Serializable {
       }
       inReplyToStatusId = getLong("in_reply_to_status_id", json);
       inReplyToUserId = getLong("in_reply_to_user_id", json);
-      inReplyToScreenName = json.getString("in_reply_toS_screenName");
+      // fix bug #2, see https://github.com/wenx999/weibo4j_fixbug/issues/2
+      inReplyToScreenName = json.getString("in_reply_to_screen_name");
       favorited = getBoolean("favorited", json);
       truncated = getBoolean("truncated", json);
       thumbnailPic = json.getString("thumbnail_pic");
