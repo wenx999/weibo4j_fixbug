@@ -22,6 +22,31 @@ public class Timeline extends Weibo {
   private static final long serialVersionUID = 6235150828015082132L;
 
   /**
+   * 批量获取指定的一批用户的微博列表
+   * 
+   * @param uids 需要查询的用户ID列表，用半角逗号分隔，一次最多20个。
+   * @param base_app 是否只获取当前应用的数据。0为否（所有数据），1为是（仅当前应用），默认为0。 
+   * @param feature 过滤类型ID，0：全部、1：原创、2：图片、3：视频、4：音乐，默认为0。
+   * @param page
+   * 
+   * @return list of statuses of the users Timeline
+   * @throws WeiboException
+   *             when Weibo service or network is unavailable
+   * @version weibo4j-V2 1.0.1
+   * @see <a
+   *      href="http://open.weibo.com/wiki/2/statuses/timeline_batch">statuses/timeline_batch
+   *      </a>
+   * @since JDK 1.5
+   */
+  public StatusWapper getBatchTimelineByUids(String uids, Integer base_app, Integer feature,
+      Paging page) throws WeiboException {
+    return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")
+        + "statuses/timeline_batch.json", new PostParameter[] {new PostParameter("uids", uids),
+        new PostParameter("base_app", base_app.toString()),
+        new PostParameter("feature", feature.toString())}, page));
+  }
+
+  /**
    * 返回最新的公共微博
    * 
    * @return list of statuses of the Public Timeline
