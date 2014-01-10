@@ -80,6 +80,28 @@ public class Tag extends WeiboResponse implements java.io.Serializable {
     return null;
   }
 
+  public static List<TagWapper> constructTagWapperList(Response res) {
+    List<TagWapper> tagWapperList = new ArrayList<TagWapper>();
+    try {
+      JSONArray tagWapperJsons = res.asJSONArray();
+      JSONObject tagWapperJson;
+      for (int i = 0; i < tagWapperJsons.length(); i++) {
+        tagWapperJson = tagWapperJsons.getJSONObject(i);
+        List<Tag> tagList = new ArrayList<Tag>();
+        for (int t = 0; t < tagWapperJson.getJSONArray("tags").length(); t++) {
+          tagList.add(new Tag(tagWapperJson.getJSONArray("tags").getJSONObject(t)));
+        }
+        String id = tagWapperJson.getString("id");
+        tagWapperList.add(new TagWapper(tagList, id));
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    } catch (WeiboException e) {
+      e.printStackTrace();
+    }
+    return tagWapperList;
+  }
+
   public static List<FavoritesTag> constructTag(Response res) throws WeiboException {
     try {
       JSONArray list = res.asJSONObject().getJSONArray("tags");
