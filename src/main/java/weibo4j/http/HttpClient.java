@@ -148,8 +148,10 @@ public class HttpClient implements java.io.Serializable {
     // 忽略cookie 避免 Cookie rejected 警告
     clientParams.setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
     client = new org.apache.commons.httpclient.HttpClient(clientParams, connectionManager);
-    Protocol myhttps = new Protocol("https", new MySSLSocketFactory(), 443);
-    Protocol.registerProtocol("https", myhttps);
+
+    // Protocol myhttps = new Protocol("https", new MySSLSocketFactory(), 443);
+    // Protocol.registerProtocol("https", myhttps);
+
     this.maxSize = maxSize;
     // 支持proxy
     if (proxyHost != null && !proxyHost.equals("")) {
@@ -161,7 +163,11 @@ public class HttpClient implements java.io.Serializable {
         log("Proxy AuthUser: " + proxyAuthUser);
         log("Proxy AuthPassword: " + proxyAuthPassword);
       }
+    } else {
+      //Protocol myhttps = new Protocol("https", new MySSLSocketFactory(), 443);
+      //Protocol.registerProtocol("https", myhttps);
     }
+
   }
 
   /**
@@ -367,6 +373,30 @@ public class HttpClient implements java.io.Serializable {
         client.getHostConfiguration().getParams().setParameter("http.default-headers", headers);
         for (Header hd : headers) {
           log(hd.getName() + ": " + hd.getValue());
+        }
+      }
+
+      // add proxy
+      if (proxyHost != null && !proxyHost.trim().equalsIgnoreCase("") && proxyPort > 0) {
+        if (client.getHostConfiguration().getProxyHost() == null
+            || !client.getHostConfiguration().getProxyHost().equalsIgnoreCase(proxyHost)) {
+          client.getHostConfiguration().setProxy(proxyHost, proxyPort);
+          client.getParams().setAuthenticationPreemptive(true);
+          if (proxyAuthUser != null && !proxyAuthUser.equals("")) {
+            client.getState().setProxyCredentials(AuthScope.ANY,
+                new UsernamePasswordCredentials(proxyAuthUser, proxyAuthPassword));
+            log("Proxy AuthUser: " + proxyAuthUser);
+            log("Proxy AuthPassword: " + proxyAuthPassword);
+          }
+        }
+
+        if (Protocol.getProtocol("https").getSocketFactory() instanceof MySSLSocketFactory) {
+          Protocol.unregisterProtocol("https");
+        }
+      } else {
+        if (!(Protocol.getProtocol("https").getSocketFactory() instanceof MySSLSocketFactory)) {
+          Protocol myhttps = new Protocol("https", new MySSLSocketFactory(), 443);
+          Protocol.registerProtocol("https", myhttps);
         }
       }
 
