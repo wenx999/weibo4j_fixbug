@@ -301,8 +301,12 @@ public class User extends WeiboResponse implements java.io.Serializable {
   public static String[] constructIds(Response res) throws WeiboException {
     try {
       JSONArray list = res.asJSONObject().getJSONArray("ids");
-      String temp = list.toString().substring(1, list.toString().length() - 1);
-      String[] ids = temp.split(",");
+      //String temp = list.toString().substring(1, list.toString().length() - 1);
+      //String[] ids = temp.split(",");
+      String[] ids = new String[list.length()];
+      for (int i = 0; i < list.length(); i++) {
+        ids[i] = list.getString(i);
+      }
       return ids;
     } catch (JSONException jsone) {
       throw new WeiboException(jsone.getMessage() + ":" + jsone.toString(), jsone);
