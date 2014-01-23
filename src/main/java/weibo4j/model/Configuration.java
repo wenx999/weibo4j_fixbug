@@ -330,4 +330,8 @@ public class Configuration {
     return getBoolean("weibo4j.debug");
 
   }
+
+  public static String getAcceptEncoding() {
+    return getProperty("weibo4j.http.acceptEncoding", "gzip");
+  }
 }
