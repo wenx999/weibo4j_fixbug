@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.log4j.Logger;
 
 import weibo4j.http.HttpClient;
-import weibo4j.test.PropertyUtil;
 
 public class TokenManagement {
 
@@ -321,7 +320,7 @@ public class TokenManagement {
       if (file.exists()) {
         propStream = new FileInputStream(file);
       } else {
-        propStream = PropertyUtil.class.getResourceAsStream(filePath);
+        propStream = TokenManagement.class.getResourceAsStream(filePath);
       }
 
       reader = new InputStreamReader(propStream, encode); // "UTF-8"
