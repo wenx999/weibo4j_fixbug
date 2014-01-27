@@ -35,12 +35,15 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.log4j.Logger;
 
+import weibo4j.Friendships;
 import weibo4j.model.Configuration;
 import weibo4j.model.MySSLSocketFactory;
 import weibo4j.model.Paging;
 import weibo4j.model.PostParameter;
 import weibo4j.model.WeiboException;
 import weibo4j.org.json.JSONException;
+import weibo4j.util.TokenManagement;
+import weibo4j.util.WeiboConfig;
 
 /**
  * @author sinaWeibo
@@ -99,6 +102,8 @@ public class HttpClient implements java.io.Serializable {
   private String proxyAuthPassword = Configuration.getProxyPassword();
   private String token;
   private String acceptEncoding = Configuration.getAcceptEncoding();
+
+  private boolean autoUpdateToken = TokenManagement.isAutoUpdateToken();
 
   public String getAcceptEncoding() {
     return acceptEncoding;
@@ -166,7 +171,12 @@ public class HttpClient implements java.io.Serializable {
 
   public String setToken(String token) {
     this.token = token;
+    this.autoUpdateToken = false;
     return this.token;
+  }
+
+  public void setAutoManageMent(boolean autoManageToken) {
+    this.autoUpdateToken = autoManageToken;
   }
 
   private final static boolean DEBUG = Configuration.getDebug();
@@ -410,6 +420,10 @@ public class HttpClient implements java.io.Serializable {
       ipaddr = InetAddress.getLocalHost();
       List<Header> headers = new ArrayList<Header>();
       if (WithTokenHeader) {
+        if (this.autoUpdateToken) {
+          TokenManagement.updateClient(this, false);
+        }
+
         if (token == null) {
           throw new IllegalStateException("Oauth2 token is not set!");
         }
@@ -479,16 +493,30 @@ public class HttpClient implements java.io.Serializable {
       }
       response.setResponseAsString(stringBuffer.toString());
 
-      log(response.toString() + "\n");
+      //log(response.toString() + "\n");
+
+
 
       if (responseCode != OK)
 
       {
         try {
-          throw new WeiboException(getCause(responseCode), response.asJSONObject(), method
-              .getStatusCode());
+          WeiboException ex =
+              new WeiboException(getCause(responseCode), response.asJSONObject(), method
+                  .getStatusCode());
+          if (this.autoUpdateToken) {
+            if (TokenManagement.isUpdateToken(ex.getErrorCode())) {
+              TokenManagement.updateClient(this, true);
+              return httpRequest(method, WithTokenHeader);
+            }
+          }
+          throw ex;
         } catch (JSONException e) {
           e.printStackTrace();
+        }
+      } else {
+        if (this.autoUpdateToken) {
+          TokenManagement.updateTokenCount(token);
         }
       }
       return response;

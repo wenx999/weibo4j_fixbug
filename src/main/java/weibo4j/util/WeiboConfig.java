@@ -8,10 +8,14 @@ public class WeiboConfig {
   public WeiboConfig() {}
 
   private static Properties props = new Properties();
+
+  public static boolean isAutoUpdateToken = false;
+
   static {
     try {
       props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(
           "config.properties"));
+      isAutoUpdateToken = "true".equalsIgnoreCase(props.getProperty("autoUpdateToken"));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
@@ -23,7 +27,15 @@ public class WeiboConfig {
     return props.getProperty(key);
   }
 
+  public static String getValue(String key, String defaultValue) {
+    return props.getProperty(key, defaultValue);
+  }
+
   public static void updateProperties(String key, String value) {
     props.setProperty(key, value);
+  }
+
+  public static boolean isAutoUpdateToken() {
+    return isAutoUpdateToken;
   }
 }
