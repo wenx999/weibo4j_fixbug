@@ -500,20 +500,27 @@ public class HttpClient implements java.io.Serializable {
       if (responseCode != OK)
 
       {
+        WeiboException ex = null;
         try {
-          WeiboException ex =
+          ex =
               new WeiboException(getCause(responseCode), response.asJSONObject(), method
                   .getStatusCode());
-          if (this.autoUpdateToken) {
-            if (TokenManagement.isUpdateToken(ex.getErrorCode())) {
-              TokenManagement.updateClient(this, true);
-              return httpRequest(method, WithTokenHeader);
-            }
-          }
-          throw ex;
         } catch (JSONException e) {
-          e.printStackTrace();
+          ex = new WeiboException(getCause(responseCode), e, method.getStatusCode());
         }
+        if (this.autoUpdateToken) {
+          if (TokenManagement.isUpdateToken(ex.getErrorCode())) {
+            TokenManagement.updateClient(this, true);
+            method.removeRequestHeader("Authorization");
+            method.removeRequestHeader("API-RemoteIP");
+            if (method.getRequestHeaders("Accept-Encoding") != null
+                && method.getRequestHeaders("Accept-Encoding").length > 0) {
+              method.removeRequestHeader("Accept-Encoding");
+            }
+            return httpRequest(method, WithTokenHeader);
+          }
+        }
+        throw ex;
       } else {
         if (this.autoUpdateToken) {
           TokenManagement.updateTokenCount(token);
@@ -522,6 +529,7 @@ public class HttpClient implements java.io.Serializable {
       return response;
 
     } catch (IOException ioe) {
+      System.out.println(token + ", proxy: " + proxyHost);
       throw new WeiboException(ioe.getMessage(), ioe, responseCode);
     } finally {
       method.releaseConnection();
