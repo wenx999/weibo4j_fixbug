@@ -237,7 +237,7 @@ public class WeiboException extends Exception {
 
   public static String getCodeMsg(int code) {
     if (errorCodeMap.containsKey(code)) {
-      return "reason: " + errorCodeMap.get(code) + ", ";
+      return " reason: " + errorCodeMap.get(code) + ", ";
     } else {
       return "";
     }
