@@ -149,12 +149,16 @@ public class TokenManagement {
         try {
           oauth.setToken(appToken);
 
-          AccessToken t = oauth.getAccessTokenInfo();
+          AccessToken t = null;
+
+          t = oauth.getAccessTokenInfo();
 
           long tokenExpireIn = -1;
           try {
             tokenExpireIn = Long.valueOf(t.getExpireIn());
-          } catch (Exception ex) {}
+          } catch (Exception ex) {
+
+          }
 
           String remainStr = "";
           boolean pass = false;
@@ -170,7 +174,7 @@ public class TokenManagement {
             }
 
           } else {
-            remainStr = "" + tokenExpireIn;
+            remainStr = "-1";
           }
 
           String infoStr = "token: " + appToken + ", uid: " + t.getUid() + ", remain: " + remainStr;
@@ -179,11 +183,19 @@ public class TokenManagement {
             infoStr = infoStr + ",  createdAt: " + sdf.format(createdDate);
           }
           System.out.println(infoStr);
+
         } catch (WeiboException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
+          String infoStr =
+              "token: " + appToken + ", uid: -" + ", remain: -2" + ", error:" + e.getErrorCode()
+                  + " " + e.getError();
+          System.out.println(infoStr);
+        } catch (Exception e) {
+          String infoStr =
+              "token: " + appToken + ", uid: -" + ", remain: -2" + ", error: " + e.getMessage();
+          System.out.println(infoStr);
         }
       }
+
     }
 
   }
