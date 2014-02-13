@@ -84,6 +84,11 @@ public class Oauth extends Weibo {
         new PostParameter("redirect_uri", WeiboConfig.getValue("redirect_URI"))}, false));
   }
 
+  public AccessToken getAccessTokenInfo() throws WeiboException {
+    return new AccessToken(client.post("https://api.weibo.com/oauth2/get_token_info",
+        new PostParameter[] {new PostParameter("access_token", client.getToken())}));
+  }
+
   public String authorize(String response_type, String state) throws WeiboException {
     return WeiboConfig.getValue("authorizeURL").trim() + "?client_id="
         + WeiboConfig.getValue("client_ID").trim() + "&redirect_uri="

@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 
+import weibo4j.Oauth;
+import weibo4j.http.AccessToken;
 import weibo4j.http.HttpClient;
+import weibo4j.model.WeiboException;
 
 public class TokenManagement {
 
@@ -111,12 +116,76 @@ public class TokenManagement {
         setupApp();
         logger.info("init token success");
 
+        if ("true".equalsIgnoreCase(WeiboConfig.getValue("showTokenInfo", "false"))) {
+          showTokenInfo();
+        }
+
       }
     } catch (Exception ex) {
       System.out.println("init token error");
       ex.printStackTrace();
       System.exit(1);
     }
+  }
+
+  /**
+   * 显示token信息
+   */
+  public static void showTokenInfo() {
+    int expiredIn = 5;
+    try {
+      expiredIn = Integer.valueOf(WeiboConfig.getValue("tokenExpireIn", "5"));
+      if (expiredIn < 1) {
+        expiredIn = 1;
+      }
+    } catch (Exception ex) {}
+
+    Oauth oauth = new Oauth();
+    oauth.client.setAutoManageMent(false);
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    for (String[] appTokenList : tokens) {
+      for (String appToken : appTokenList) {
+        try {
+          oauth.setToken(appToken);
+
+          AccessToken t = oauth.getAccessTokenInfo();
+
+          long tokenExpireIn = -1;
+          try {
+            tokenExpireIn = Long.valueOf(t.getExpireIn());
+          } catch (Exception ex) {}
+
+          String remainStr = "";
+          boolean pass = false;
+          if (tokenExpireIn > 0) {
+            long day = tokenExpireIn / 86400;
+            if (day >= expiredIn) {
+              continue;
+            } else {
+              long hour = (tokenExpireIn - 86400 * day) / 3600;
+              long minute = (tokenExpireIn - 86400 * day - hour * 3600) / 60;
+              long second = tokenExpireIn - 86400 * day - hour * 3600 - minute * 60;
+              remainStr = day + " days " + hour + ":" + minute + ":" + second;
+            }
+
+          } else {
+            remainStr = "" + tokenExpireIn;
+          }
+
+          String infoStr = "token: " + appToken + ", uid: " + t.getUid() + ", remain: " + remainStr;
+          if (t.getCreatedAt() != null && !t.getCreatedAt().isEmpty()) {
+            Date createdDate = new Date(Long.valueOf(t.getCreatedAt()) * 1000);
+            infoStr = infoStr + ",  createdAt: " + sdf.format(createdDate);
+          }
+          System.out.println(infoStr);
+        } catch (WeiboException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+
   }
 
   public static boolean isAutoUpdateToken() {
@@ -408,5 +477,9 @@ public class TokenManagement {
   // }
   // }
   // }
+
+  public static void main(String[] args) {
+    showTokenInfo();
+  }
 
 }

@@ -13,6 +13,7 @@ public class AccessToken extends WeiboResponse implements Serializable {
   private static final long serialVersionUID = 6986530164134648944L;
   private String accessToken;
   private String expireIn;
+  private String createdAt;
   private String refreshToken;
   private String uid;
 
@@ -22,8 +23,12 @@ public class AccessToken extends WeiboResponse implements Serializable {
     try {
       accessToken = json.getString("access_token");
       expireIn = json.getString("expires_in");
+      if (json.getString("expire_in") != null && !json.getString("expire_in").isEmpty()) {
+        expireIn = json.getString("expire_in");
+      }
       refreshToken = json.getString("refresh_token");
       uid = json.getString("uid");
+      createdAt = json.getString("create_at");
     } catch (JSONException je) {
       throw new WeiboException(je.getMessage() + ":" + json.toString(), je);
     }
@@ -56,6 +61,11 @@ public class AccessToken extends WeiboResponse implements Serializable {
   }
 
 
+
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -87,7 +97,7 @@ public class AccessToken extends WeiboResponse implements Serializable {
   @Override
   public String toString() {
     return "AccessToken [" + "accessToken=" + accessToken + ", expireIn=" + expireIn
-        + ", refreshToken=" + refreshToken + ",uid=" + uid + "]";
+        + ", refreshToken=" + refreshToken + ",uid=" + uid + ",createdAt=" + createdAt + "]";
   }
 
 
