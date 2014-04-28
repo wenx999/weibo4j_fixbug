@@ -1,5 +1,7 @@
 package weibo4j.examples.tags;
 
+import java.util.List;
+
 import weibo4j.Tags;
 import weibo4j.model.TagWapper;
 import weibo4j.model.WeiboException;
@@ -10,7 +12,7 @@ public class GetTagsBatch {
     String access_token = args[0];
     Tags tm = new Tags();
     tm.client.setToken(access_token);
-    TagWapper tags = null;
+    List<TagWapper> tags = null;
     String uids = args[1];
     try {
       ;
