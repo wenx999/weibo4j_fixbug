@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -464,6 +465,7 @@ public class HttpClient implements java.io.Serializable {
 
       method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER,
           new DefaultHttpMethodRetryHandler(3, false));
+      // method.setRequestHeader("Connection", "close");
       client.executeMethod(method);
       Header[] resHeader = method.getResponseHeaders();
       responseCode = method.getStatusCode();
@@ -485,6 +487,7 @@ public class HttpClient implements java.io.Serializable {
         inputStream = new GZIPInputStream(inputStream);
       }
 
+      /*
       BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
       StringBuffer stringBuffer = new StringBuffer();
       String str = "";
@@ -492,6 +495,18 @@ public class HttpClient implements java.io.Serializable {
         stringBuffer.append(str);
       }
       response.setResponseAsString(stringBuffer.toString());
+       */
+      InputStreamReader reader = new InputStreamReader(inputStream, "UTF-8");
+      StringWriter writer = new StringWriter();
+
+      char[] buffer = new char[10240];
+      for (int length = 0; (length = reader.read(buffer)) > 0;) {
+        writer.write(buffer, 0, length);
+      }
+
+      reader.close();
+      response.setResponseAsString(writer.toString());
+      writer.close();
 
       //log(response.toString() + "\n");
 

@@ -1,6 +1,9 @@
 package weibo4j;
 
+import weibo4j.model.Paging;
 import weibo4j.model.PostParameter;
+import weibo4j.model.Status;
+import weibo4j.model.StatusWapper;
 import weibo4j.model.WeiboException;
 import weibo4j.org.json.JSONArray;
 import weibo4j.util.WeiboConfig;
@@ -81,5 +84,10 @@ public class Search extends Weibo {
         WeiboConfig.getValue("baseURL") + "search/suggestions/at_users.json",
         new PostParameter[] {new PostParameter("q", q), new PostParameter("count", count),
             new PostParameter("type", type), new PostParameter("range", range)}).asJSONArray();
+  }
+
+  public StatusWapper seartchStatus(String q, Paging page) throws WeiboException {
+    return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")
+        + "search/topics.json", new PostParameter[] {new PostParameter("q", q)}, page));
   }
 }

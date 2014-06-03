@@ -2,6 +2,7 @@ package weibo4j.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import weibo4j.http.Response;
@@ -38,6 +39,7 @@ public class Status extends WeiboResponse implements java.io.Serializable {
   private String annotations; //元数据，没有时不返回此字段
   private int mlevel;
   private Visible visible;
+  private List<String> picUrls;
 
   public Status() {
 
@@ -84,6 +86,13 @@ public class Status extends WeiboResponse implements java.io.Serializable {
       }
       if (!json.isNull("visible")) {
         visible = new Visible(json.getJSONObject("visible"));
+      }
+      if (!json.isNull("pic_urls")) {
+        picUrls = new LinkedList<String>();
+        JSONArray picJsonArray = json.getJSONArray("pic_urls");
+        for (int picIndex = 0; picIndex < picJsonArray.length(); picIndex++) {
+          picUrls.add(picJsonArray.getJSONObject(picIndex).getString("thumbnail_pic"));
+        }
       }
     } catch (JSONException je) {
       throw new WeiboException(je.getMessage() + ":" + json.toString(), je);
@@ -317,6 +326,19 @@ public class Status extends WeiboResponse implements java.io.Serializable {
 
   public void setTruncated(boolean truncated) {
     this.truncated = truncated;
+  }
+
+  public List<String> getPicUrls() {
+    return picUrls;
+  }
+
+  public void setPicUrls(List<String> iPicUrls) {
+    if (iPicUrls != null) {
+      picUrls = new LinkedList<String>();
+      picUrls.addAll(iPicUrls);
+    } else {
+      picUrls = null;
+    }
   }
 
   public static StatusWapper constructWapperStatus(Response res) throws WeiboException {

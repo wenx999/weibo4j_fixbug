@@ -68,6 +68,17 @@ public class User extends WeiboResponse implements java.io.Serializable {
   private String verifiedReason; //认证原因
   private String weihao; //微號
   private String statusId;
+  private int classNum;
+  private String coverImg;
+  private int ptype;
+  private String verifiedTrade;
+  private String verifiedReasonUrl;
+  private String verifiedSource;
+  private String verifiedSourceUrl;
+  private int star;
+  private int mbtype;
+  private int mbrank;
+
 
   public String getVerified_reason() {
     return verifiedReason;
@@ -249,6 +260,86 @@ public class User extends WeiboResponse implements java.io.Serializable {
     return biFollowersCount;
   }
 
+  public int getClassNum() {
+    return classNum;
+  }
+
+  public void setClassNum(int classNum) {
+    this.classNum = classNum;
+  }
+
+  public String getCoverImg() {
+    return coverImg;
+  }
+
+  public void setCoverImg(String coverImg) {
+    this.coverImg = coverImg;
+  }
+
+  public int getPtype() {
+    return ptype;
+  }
+
+  public void setPtype(int ptype) {
+    this.ptype = ptype;
+  }
+
+  public String getVerifiedTrade() {
+    return verifiedTrade;
+  }
+
+  public void setVerifiedTrade(String verifiedTrade) {
+    this.verifiedTrade = verifiedTrade;
+  }
+
+  public String getVerifiedReasonUrl() {
+    return verifiedReasonUrl;
+  }
+
+  public void setVerifiedReasonUrl(String verifiedReasonUrl) {
+    this.verifiedReasonUrl = verifiedReasonUrl;
+  }
+
+  public String getVerifiedSource() {
+    return verifiedSource;
+  }
+
+  public void setVerifiedSource(String verifiedSource) {
+    this.verifiedSource = verifiedSource;
+  }
+
+  public String getVerifiedSourceUrl() {
+    return verifiedSourceUrl;
+  }
+
+  public void setVerifiedSourceUrl(String verifiedSourceUrl) {
+    this.verifiedSourceUrl = verifiedSourceUrl;
+  }
+
+  public int getStar() {
+    return star;
+  }
+
+  public void setStar(int star) {
+    this.star = star;
+  }
+
+  public int getMbtype() {
+    return mbtype;
+  }
+
+  public void setMbtype(int mbtype) {
+    this.mbtype = mbtype;
+  }
+
+  public int getMbrank() {
+    return mbrank;
+  }
+
+  public void setMbrank(int mbrank) {
+    this.mbrank = mbrank;
+  }
+
   /*package*/public User(JSONObject json) throws WeiboException {
     super();
     init(json);
@@ -291,6 +382,20 @@ public class User extends WeiboResponse implements java.io.Serializable {
         weihao = json.getString("weihao");
         if (!json.isNull("status")) {
           status = new Status(json.getJSONObject("status"));
+        }
+        try {
+          classNum = json.getInt("class");
+          coverImg = json.getString("cover_image");
+          ptype = json.getInt("ptype");
+          verifiedTrade = json.getString("verified_trade");
+          verifiedReasonUrl = json.getString("verified_reason_url");
+          verifiedSource = json.getString("verified_source");
+          verifiedSourceUrl = json.getString("verified_source_url");
+          star = json.getInt("star");
+          mbtype = json.getInt("mbtype");
+          mbrank = json.getInt("mbrank");
+        } catch (Exception ex) {
+
         }
       } catch (JSONException jsone) {
         throw new WeiboException(jsone.getMessage() + ":" + json.toString(), jsone);

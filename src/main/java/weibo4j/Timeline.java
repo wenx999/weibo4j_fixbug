@@ -533,6 +533,15 @@ public class Timeline extends Weibo {
         new PostParameter[] {new PostParameter("id", id)}));
   }
 
+  /*
+   * 根据微博IDs获取微博内容列表
+   */
+  public StatusWapper showStatusBatch(String ids, Integer trimUser) throws WeiboException {
+    return Status.constructWapperStatus(client.get(WeiboConfig.getValue("baseURL")
+        + "statuses/show_batch.json", new PostParameter[] {new PostParameter("ids", ids),
+        new PostParameter("trim_user", trimUser)}));
+  }
+
   /**
    * 通过微博ID获取其MID
    * 
